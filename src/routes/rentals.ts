@@ -1,19 +1,15 @@
+// src/routes/rentals.ts (最終簡化版)
 
 import { Hono } from 'hono';
-import * as bookController from '../controllers/bookController.ts'; // ⬅️ 確保導入 controller
+import { createRental, returnBook } from '../controllers/rentalController.ts'; 
 
 export const rentalsRouter = new Hono();
 
-// 處理 POST /rentals 的請求
-rentalsRouter.post('/', async (c) => {
-    const { userId, bookId } = await c.req.json();
-    const result = await bookController.rentBook(parseInt(userId, 10), parseInt(bookId, 10));
+// POST /rentals - 創建租借記錄 (直接調用 createRental，錯誤會被 HTTPException 處理)
+rentalsRouter.post('/', createRental);
 
-    if (result.error) {
-        return c.json({ error: result.error }, result.status);
-    }
-    return c.json({ message: 'Book rented successfully!', rental: result.rental }, result.status);
-});
+// PATCH /rentals/:rentalId - 歸還書籍 (新的歸還路由)
+rentalsRouter.patch('/:rentalId', returnBook);
 
-// 未來的歸還 API (POST /rentals/return) 也會放在這裡
-// rentalsRouter.post('/return', ...)
+// 導出路由
+export default rentalsRouter;
