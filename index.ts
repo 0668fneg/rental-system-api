@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { usersRouter } from './src/routes/users.ts';
 import { booksRouter } from './src/routes/books.ts'; 
 import { rentalsRouter } from './src/routes/rentals.ts';
-import { logger } from 'hono/logger';
+import { requestLogger } from './src/middleware/requestLogger.ts';
 import { dbPool } from './src/db/db.ts'; // 用於伺服器關閉時關閉連接池
 
 // 載入環境變數
@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const app = new Hono();
-app.use('*', logger());
+app.use('*', requestLogger);
 
 
 // 1. 根路由 
